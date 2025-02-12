@@ -5,12 +5,16 @@
 ### Gateway
 - gateway
   - pkg
-    - [ ] mux
+    - [x] mux
+    - [ ] config
     - [ ] swagger
     - [ ] jwt
     - [ ] grpc
     - [ ] wire
+    - [ ] mlog
   - feature
+    - [x] health check API
+    - [ ] log init
     - [ ] login API
       - jwt
       - test
