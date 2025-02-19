@@ -6,14 +6,18 @@
 - gateway
   - pkg
     - [x] mux
+    - [ ] log
     - [ ] config
     - [ ] swagger
     - [ ] jwt
     - [ ] grpc
     - [ ] wire
-    - [ ] mlog
   - feature
     - [x] health check API
+    - [ ] error handler
+      - [ ] 400 api
+      - [ ] 500 api
+    - [ ] input output log
     - [ ] log init
     - [ ] login API
       - jwt
