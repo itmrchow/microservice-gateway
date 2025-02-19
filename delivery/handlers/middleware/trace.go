@@ -21,6 +21,7 @@ func Trace(next http.Handler) http.Handler {
 		}
 		// save in context
 		ctx := context.WithValue(r.Context(), TraceIDKey{}, traceID)
+		w.Header().Set(TraceIDHeader, traceID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

@@ -18,9 +18,8 @@ func RegisterPublicHandlers() *mux.Router {
 	r := mux.NewRouter()
 
 	// middleware
-	// - TraceId
+	r.Use(middleware.Trace)
 	// - recover panic
-	// - log
 	r.Use(middleware.Logger)
 
 	v1 := r.PathPrefix("/v1").Subrouter()
