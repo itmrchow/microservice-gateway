@@ -20,7 +20,7 @@ func RegisterPublicHandlers() *mux.Router {
 	// middleware
 	r.Use(middleware.Trace)
 	// - recover panic
-	r.Use(middleware.Logger)
+	r.Use(middleware.ApiLogHandler)
 
 	v1 := r.PathPrefix("/v1").Subrouter()
 

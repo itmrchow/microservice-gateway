@@ -1,44 +1,85 @@
 package middleware
 
 import (
+	"errors"
+	"io"
 	"net/http"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
+	"github.com/itmrchow/microservice-gateway/delivery/response/writer"
+	eErrs "github.com/itmrchow/microservice-gateway/entities/errors"
 	"github.com/itmrchow/microservice-gateway/util"
 )
 
-// Logger: 記錄req , resp info
-func Logger(next http.Handler) http.Handler {
+// ApiLogHandler: 記錄req , resp info
+func ApiLogHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var (
-			logEvent = log.Info()
 
-			url     = r.URL.Path
-			method  = r.Method
-			ip      = util.GetIP(r)
-			traceID = util.GetTraceID(r.Context())
+		// TODO: get global logger
+
+		var (
+			rw = &writer.ResponseWriter{
+				ResponseWriter: w,
+			}
 		)
 
-		// request info
-		logEvent.
-			Str("type", "API").
-			Str("trace_id", traceID).
-			Str("url", url).
-			Str("method", method).
-			Str("ip", ip)
+		next.ServeHTTP(rw, r)
 
-		logQueryParams(logEvent, r)
+		event := getLogEvent(rw.StatusCode)
 
-		next.ServeHTTP(w, r)
+		logReq(event, r)
+		logResp(event, rw)
 
-		//response info
-
-		logEvent.Send()
+		event.Send()
 	})
 }
 
-func logQueryParams(logEvent *zerolog.Event, r *http.Request) {
+// logReq: 記錄req info
+func logReq(event *zerolog.Event, r *http.Request) {
+	var (
+		url     = r.URL.Path
+		method  = r.Method
+		ip      = util.GetIP(r)
+		traceID = util.GetTraceID(r.Context())
+	)
 
+	// request info
+	event.
+		Str("type", "API").
+		Str("trace_id", traceID).
+		Str("url", url).
+		Str("method", method).
+		Str("ip", ip)
+
+	switch method {
+	case http.MethodGet, http.MethodDelete:
+		event.Str("query_params", r.URL.RawQuery)
+	case http.MethodPost, http.MethodPut, http.MethodPatch:
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			event.Err(err)
+		}
+		event.Str("request_body", string(body))
+	}
+}
+
+// logResp: 記錄resp info
+func logResp(event *zerolog.Event, rw *writer.ResponseWriter) {
+	event.
+		Int("status_code", rw.StatusCode).
+		Str("response_body", string(rw.Data))
+}
+
+// getLogEvent: 取得log event , 根據statusCode 決定log level
+func getLogEvent(statusCode int) *zerolog.Event {
+	switch {
+	case statusCode >= 500:
+		return log.Err(errors.New(string(eErrs.SystemUnavailableErrCode)))
+	case statusCode >= 400:
+		return log.Warn()
+	default:
+		return log.Info()
+	}
 }

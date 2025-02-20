@@ -11,6 +11,26 @@ import (
 	"github.com/itmrchow/microservice-gateway/util"
 )
 
+type ResponseWriter struct {
+	http.ResponseWriter
+	StatusCode int
+	Data       []byte
+}
+
+func (r *ResponseWriter) Header() http.Header {
+	return r.ResponseWriter.Header()
+}
+
+func (r *ResponseWriter) Write(p0 []byte) (int, error) {
+	r.Data = p0
+	return r.ResponseWriter.Write(p0)
+}
+
+func (r *ResponseWriter) WriteHeader(statusCode int) {
+	r.StatusCode = statusCode
+	r.ResponseWriter.WriteHeader(statusCode)
+}
+
 func SuccessResponseWriter(r *http.Request, w http.ResponseWriter, data any) {
 	resp := response.SuccessResponse{}
 	resp.Message = "success"
@@ -23,7 +43,7 @@ func SuccessResponseWriter(r *http.Request, w http.ResponseWriter, data any) {
 	w.Write(jsonData)
 }
 
-func InternalErrResponseWriter(r *http.Request, w http.ResponseWriter, err errors.InternalErr, errData any) {
+func InternalErrResponseWriter(r *http.Request, w http.ResponseWriter, err error, errData any) {
 	// funcName, line := system.GetCaller(2)
 
 	// TODO: print err log
