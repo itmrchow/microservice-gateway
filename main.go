@@ -6,25 +6,26 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 
 	"github.com/itmrchow/microservice-gateway/delivery/handlers"
 )
 
-const (
-	public_port   = "8080" //TODO: 移到config
-	internal_port = "8081" //TODO: 移到config
-)
-
 func main() {
+	initConfig()
 	initLog()
 	initRouter()
 }
 
-// initRouter 初始化路由
-func initRouter() {
-	mux := handlers.RegisterPublicHandlers()
-	log.Info().Msg("http internal server listen in port " + public_port)
-	log.Fatal().AnErr("error", http.ListenAndServe(":"+public_port, mux))
+// initConfig 初始化config
+func initConfig() {
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal().Err(err).Msg("config init error")
+	}
 }
 
 // initLog 初始化log
@@ -34,4 +35,16 @@ func initLog() {
 	// TODO: 初始化時間
 	// TODO: 輸出位置
 	// TODO: Global log level
+}
+
+// initRouter 初始化路由
+func initRouter() {
+	var (
+		// publicPort   = viper.GetString("http_public_port")
+		internalPort = viper.GetString("http_internal_port")
+	)
+
+	mux := handlers.RegisterPublicHandlers()
+	log.Info().Msg("http internal server listen in port " + internalPort)
+	log.Fatal().AnErr("error", http.ListenAndServe(":"+internalPort, mux))
 }

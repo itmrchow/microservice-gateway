@@ -1,0 +1,11 @@
+# router
+http_public_port: 
+http_internal_port: 
+
+# service
+
+# log
+
+# log_level: debug
+# log_output: stdout
+# log_time_format: 2006-01-02 15:04:05

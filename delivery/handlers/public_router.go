@@ -24,12 +24,29 @@ func RegisterPublicHandlers() *mux.Router {
 
 	v1 := r.PathPrefix("/v1").Subrouter()
 
-	RegisterPublicHandlersV1(v1)
+	RegisterInternalHandlersV1(v1)
 
 	return r
 }
 
-func RegisterPublicHandlersV1(r *mux.Router) {
+// Internal API
+func RegisterInternalHandlers() *mux.Router {
+
+	r := mux.NewRouter()
+
+	// middleware
+	r.Use(middleware.Trace)
+	// - recover panic
+	r.Use(middleware.ApiLogHandler)
+
+	v1 := r.PathPrefix("/v1").Subrouter()
+
+	RegisterInternalHandlersV1(v1)
+
+	return r
+}
+
+func RegisterInternalHandlersV1(r *mux.Router) {
 	r.HandleFunc("/health", HealthHandler).Methods(http.MethodGet) // health check
 	r.HandleFunc("/internal-error", InternalErrHandler).Methods(http.MethodGet)
 	r.HandleFunc("/bad-request", BadReqHandler).Methods(http.MethodGet)

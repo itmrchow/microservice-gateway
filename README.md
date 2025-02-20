@@ -7,7 +7,7 @@
   - pkg
     - [x] mux
     - [ ] log
-    - [ ] config
+    - [x] config
     - [ ] swagger
     - [ ] jwt
     - [ ] grpc
