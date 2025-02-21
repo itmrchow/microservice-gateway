@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/itmrchow/microservice-gateway/util"
+	mCtx "github.com/itmrchow/microservice-gateway/infrastructure/util/context"
 )
 
 const TraceIDHeader = "X-Trace-ID"
@@ -20,7 +20,7 @@ func Trace(next http.Handler) http.Handler {
 			r.Header.Set(TraceIDHeader, traceID)
 		}
 		// save in context
-		ctx := context.WithValue(r.Context(), util.TraceIDKey{}, traceID)
+		ctx := context.WithValue(r.Context(), mCtx.TraceIDKey{}, traceID)
 		w.Header().Set(TraceIDHeader, traceID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

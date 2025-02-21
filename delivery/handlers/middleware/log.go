@@ -10,7 +10,8 @@ import (
 	"github.com/itmrchow/microservice-gateway/delivery/response/writer"
 	eErrs "github.com/itmrchow/microservice-gateway/entities/errors"
 	mlog "github.com/itmrchow/microservice-gateway/entities/log"
-	"github.com/itmrchow/microservice-gateway/util"
+	mCtx "github.com/itmrchow/microservice-gateway/infrastructure/util/context"
+	mHttp "github.com/itmrchow/microservice-gateway/infrastructure/util/http"
 )
 
 // ApiLogHandler: 記錄req , resp info
@@ -39,8 +40,8 @@ func logReq(event *zerolog.Event, r *http.Request) {
 	var (
 		url     = r.URL.Path
 		method  = r.Method
-		ip      = util.GetIP(r)
-		traceID = util.GetTraceID(r.Context())
+		ip      = mHttp.GetIP(r)
+		traceID = mCtx.GetTraceID(r.Context())
 	)
 
 	// request info

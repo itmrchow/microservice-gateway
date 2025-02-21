@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/itmrchow/microservice-gateway/entities/errors"
-	"github.com/itmrchow/microservice-gateway/util"
+	mCtx "github.com/itmrchow/microservice-gateway/infrastructure/util/context"
 )
 
 type ResponseWriter struct {
@@ -48,7 +48,7 @@ func InternalErrResponseWriter(r *http.Request, w http.ResponseWriter, err error
 
 	// TODO: print err log
 
-	traceID := util.GetTraceID(r.Context())
+	traceID := mCtx.GetTraceID(r.Context())
 
 	log.Error().
 		Str("trace_id", traceID).
