@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/itmrchow/microservice-gateway/delivery/handlers"
-	mlog "github.com/itmrchow/microservice-gateway/entities/log"
+	mlog "github.com/itmrchow/microservice-gateway/infrastructure/log"
 )
 
 func main() {
@@ -35,11 +35,21 @@ func initConfig() {
 func initBase() {
 	// time zone
 	time.Local = time.UTC
+
+	log.Info().Msgf("base init success")
 }
 
 // initLog 初始化log
 func initLog() {
-	mlog.InitLog()
+	mlog.InitLog(mlog.LogSettingInfo{
+		LogLevelStr: viper.GetString("log_level"),
+		Output:      viper.GetString("log_output"),
+		File:        viper.GetString("log_file"),
+		Dir:         viper.GetString("log_dir"),
+		ServerName:  viper.GetString("server_name"),
+	})
+
+	log.Info().Msgf("log init success")
 }
 
 // initRouter 初始化路由
@@ -50,6 +60,6 @@ func initRouter() {
 	)
 
 	mux := handlers.RegisterPublicHandlers()
-	mlog.Info().Msg("http internal server listen in port " + internalPort)
 	mlog.Fatal().AnErr("error", http.ListenAndServe(":"+internalPort, mux))
+	mlog.Info().Msg("http internal server listen in port " + internalPort)
 }

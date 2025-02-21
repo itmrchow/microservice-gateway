@@ -10,28 +10,35 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 )
 
 var (
-	logger        *zerolog.Logger
-	loggerMutex   sync.RWMutex
 	LOG_LEVEL_STR = ""
 	LOG_OUTPUT    = ""
 	LOG_FILE      = ""
 	LOG_DIR       = ""
 	SERVER_NAME   = ""
 
-	logsMap sync.Map
+	logger      *zerolog.Logger
+	loggerMutex sync.RWMutex
+	logsMap     sync.Map
 )
 
-func InitLog() {
+type LogSettingInfo struct {
+	LogLevelStr string
+	Output      string
+	File        string
+	Dir         string
+	ServerName  string
+}
+
+func InitLog(info LogSettingInfo) {
 	// init env
-	LOG_LEVEL_STR = viper.GetString("log_level")
-	LOG_OUTPUT = viper.GetString("log_output")
-	LOG_FILE = viper.GetString("log_file")
-	LOG_DIR = viper.GetString("log_dir")
-	SERVER_NAME = viper.GetString("server_name")
+	LOG_LEVEL_STR = info.LogLevelStr
+	LOG_OUTPUT = info.Output
+	LOG_FILE = info.File
+	LOG_DIR = info.Dir
+	SERVER_NAME = info.ServerName
 
 	// set global log level
 	logLevel, err := zerolog.ParseLevel(LOG_LEVEL_STR)
@@ -50,11 +57,6 @@ func InitLog() {
 	if LOG_OUTPUT == "file" {
 		go checkLogRotation()
 	}
-
-	// 等待2秒讓log初始化完成
-	time.Sleep(2 * time.Second)
-
-	log.Info().Msgf("log init success")
 }
 
 func Logger() *zerolog.Logger {

@@ -9,7 +9,7 @@ import (
 
 	"github.com/itmrchow/microservice-gateway/delivery/response/writer"
 	eErrs "github.com/itmrchow/microservice-gateway/entities/errors"
-	mlog "github.com/itmrchow/microservice-gateway/entities/log"
+	mlog "github.com/itmrchow/microservice-gateway/infrastructure/log"
 	mCtx "github.com/itmrchow/microservice-gateway/infrastructure/util/context"
 	mHttp "github.com/itmrchow/microservice-gateway/infrastructure/util/http"
 )
@@ -66,7 +66,6 @@ func logReq(event *zerolog.Event, r *http.Request) {
 
 // logResp: 記錄resp info
 func logResp(event *zerolog.Event, rw *writer.ResponseWriter) {
-
 	event.
 		Int("status_code", rw.StatusCode).
 		Str("response_body", string(rw.Data))
