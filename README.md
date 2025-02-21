@@ -1,6 +1,9 @@
 # microservice-gateway
 
 ## Architecture
+- infrastructure（基礎設施）
+  - 提供通用功能
+  - 不包含業務邏輯
 - delivery (對外層)
   - 負責處理 HTTP/gRPC 請求
   - 處理請求參數驗證
@@ -21,15 +24,13 @@
   - 封裝資料庫操作細節
   - 提供資料存取介面
   - 可以切換不同的資料來源
-- infrastructure（基礎設施）
-  - 提供通用功能
-  - 不包含業務邏輯
+
 
 ### Gateway
 - gateway
   - pkg
     - [x] mux
-    - [ ] log
+    - [x] log
     - [x] config
     - [ ] swagger
     - [ ] jwt
@@ -41,7 +42,7 @@
       - [ ] 400 api
       - [ ] 500 api
     - [ ] input output log
-    - [ ] log init
+    - [x] log init
     - [ ] login API
       - jwt
       - test

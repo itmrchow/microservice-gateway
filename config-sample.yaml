@@ -1,3 +1,6 @@
+# server
+server_name: microservice-gateway
+
 # router
 http_public_port: 
 http_internal_port: 
@@ -5,7 +8,7 @@ http_internal_port:
 # service
 
 # log
-
-# log_level: debug
-# log_output: stdout
-# log_time_format: 2006-01-02 15:04:05
+log_level: debug # debug, info, warn, error, fatal, panic
+log_output: stdout # stdout, file
+log_file:  # log file path
+log_dir:  # log file directory
