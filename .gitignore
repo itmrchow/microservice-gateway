@@ -1,3 +1,4 @@
 http/*
 .vscode/*
 config.yaml
+*.log

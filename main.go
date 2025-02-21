@@ -4,17 +4,20 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 
 	"github.com/itmrchow/microservice-gateway/delivery/handlers"
+	mlog "github.com/itmrchow/microservice-gateway/entities/log"
 )
 
 func main() {
 	initConfig()
+	initBase()
 	initLog()
 	initRouter()
+
+	time.Local = time.UTC
 }
 
 // initConfig 初始化config
@@ -28,13 +31,15 @@ func initConfig() {
 	}
 }
 
+// initBase 初始化系統基礎設定
+func initBase() {
+	// time zone
+	time.Local = time.UTC
+}
+
 // initLog 初始化log
 func initLog() {
-	now := time.Now()
-	zerolog.TimestampFunc = now.UTC
-	// TODO: 初始化時間
-	// TODO: 輸出位置
-	// TODO: Global log level
+	mlog.InitLog()
 }
 
 // initRouter 初始化路由
@@ -45,6 +50,6 @@ func initRouter() {
 	)
 
 	mux := handlers.RegisterPublicHandlers()
-	log.Info().Msg("http internal server listen in port " + internalPort)
-	log.Fatal().AnErr("error", http.ListenAndServe(":"+internalPort, mux))
+	mlog.Info().Msg("http internal server listen in port " + internalPort)
+	mlog.Fatal().AnErr("error", http.ListenAndServe(":"+internalPort, mux))
 }

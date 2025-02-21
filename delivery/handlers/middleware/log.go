@@ -6,18 +6,16 @@ import (
 	"net/http"
 
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 
 	"github.com/itmrchow/microservice-gateway/delivery/response/writer"
 	eErrs "github.com/itmrchow/microservice-gateway/entities/errors"
+	mlog "github.com/itmrchow/microservice-gateway/entities/log"
 	"github.com/itmrchow/microservice-gateway/util"
 )
 
 // ApiLogHandler: 記錄req , resp info
 func ApiLogHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		// TODO: get global logger
 
 		var (
 			rw = &writer.ResponseWriter{
@@ -67,6 +65,7 @@ func logReq(event *zerolog.Event, r *http.Request) {
 
 // logResp: 記錄resp info
 func logResp(event *zerolog.Event, rw *writer.ResponseWriter) {
+
 	event.
 		Int("status_code", rw.StatusCode).
 		Str("response_body", string(rw.Data))
@@ -76,10 +75,10 @@ func logResp(event *zerolog.Event, rw *writer.ResponseWriter) {
 func getLogEvent(statusCode int) *zerolog.Event {
 	switch {
 	case statusCode >= 500:
-		return log.Err(errors.New(string(eErrs.SystemUnavailableErrCode)))
+		return mlog.Err(errors.New(string(eErrs.SystemUnavailableErrCode)))
 	case statusCode >= 400:
-		return log.Warn()
+		return mlog.Warn()
 	default:
-		return log.Info()
+		return mlog.Info()
 	}
 }
