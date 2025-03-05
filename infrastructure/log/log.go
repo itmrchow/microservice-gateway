@@ -85,14 +85,16 @@ func setLogger() {
 	loggerMutex.Lock()
 	defer loggerMutex.Unlock()
 
-	lg := log.Logger.Output(getLogWriter())
+	lg := log.Logger.Output(getLogWriter()).With().
+		Str("server_name", SERVER_NAME).
+		Logger()
 	logger = &lg
 }
 
 func getLogWriter() io.Writer {
 
 	if LOG_OUTPUT == "stdout" {
-		return zerolog.ConsoleWriter{Out: os.Stdout}
+		return os.Stdout
 	} else if LOG_OUTPUT == "file" {
 		return fileWriter(SERVER_NAME, LOG_DIR, LOG_FILE)
 	}

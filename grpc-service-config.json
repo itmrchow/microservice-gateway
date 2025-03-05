@@ -1,0 +1,14 @@
+{
+    "load_balancing_config": { "round_robin": {} },
+    "retry_policy":{
+        "max_attempts": 3,
+        "initial_backoff": "0.5s",
+        "max_backoff": "1s",
+        "backoff_multiplier": 2.0,
+        "retryable_status_codes": [
+            "UNAVAILABLE",
+            "ABORTED"
+        ]
+    }
+
+}

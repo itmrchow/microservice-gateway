@@ -9,12 +9,14 @@ import (
 
 	"github.com/itmrchow/microservice-gateway/delivery/handlers"
 	mlog "github.com/itmrchow/microservice-gateway/infrastructure/log"
+	"github.com/itmrchow/microservice-gateway/infrastructure/svc"
 )
 
 func main() {
 	initConfig()
 	initBase()
 	initLog()
+	initSubService()
 	initRouter()
 
 	time.Local = time.UTC
@@ -29,6 +31,8 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatal().Err(err).Msg("config init error")
 	}
+
+	log.Info().Msgf("config init success")
 }
 
 // initBase 初始化系統基礎設定
@@ -49,7 +53,13 @@ func initLog() {
 		ServerName:  viper.GetString("server_name"),
 	})
 
-	log.Info().Msgf("log init success")
+	mlog.Info().Msgf("log init success")
+}
+
+// initSubService 初始化子服務
+func initSubService() {
+	svc.InitAccLocation(viper.GetString("service_address.account_grpc"))
+	mlog.Info().Msgf("sub service init success")
 }
 
 // initRouter 初始化路由
@@ -60,6 +70,6 @@ func initRouter() {
 	)
 
 	mux := handlers.RegisterPublicHandlers()
+	mlog.Info().Msgf("http internal server listen in port " + internalPort)
 	mlog.Fatal().AnErr("error", http.ListenAndServe(":"+internalPort, mux))
-	mlog.Info().Msg("http internal server listen in port " + internalPort)
 }

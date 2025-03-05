@@ -34,7 +34,7 @@
     - [x] config
     - [ ] swagger
     - [ ] jwt
-    - [ ] grpc
+    - [x] grpc
     - [ ] wire
   - feature
     - [x] health check API
@@ -49,6 +49,8 @@
     - [ ] log output
     - [ ] rate limit
     - [ ] OAuth?
+  - CICD
+    - github actions 
 
 ### Micro Services
 - user
